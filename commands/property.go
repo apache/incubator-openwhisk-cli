@@ -33,6 +33,7 @@ import (
 var Properties struct {
 	Cert       string
 	Key        string
+	CaCert     string
 	Auth       string
 	APIHost    string
 	APIVersion string
@@ -45,6 +46,7 @@ var Properties struct {
 
 const DefaultCert string = ""
 const DefaultKey string = ""
+const DefaultCaCert string = ""
 const DefaultAuth string = ""
 const DefaultAPIHost string = ""
 const DefaultAPIVersion string = "v1"
@@ -94,6 +96,14 @@ var propertySetCmd = &cobra.Command{
 			Client.Config.Key = key
 			okMsg += fmt.Sprintf(
 				wski18n.T("{{.ok}} client key set. Run 'wsk property get --key' to see the new value.\n",
+					map[string]interface{}{"ok": color.GreenString("ok:")}))
+		}
+
+		if key := Flags.Global.CaCert; len(key) > 0 {
+			props["CACERT"] = key
+			Client.Config.CaCert = key
+			okMsg += fmt.Sprintf(
+				wski18n.T("{{.ok}} CA cert set. Run 'wsk property get --cacert' to see the new value.\n",
 					map[string]interface{}{"ok": color.GreenString("ok:")}))
 		}
 
@@ -217,6 +227,13 @@ var propertyUnsetCmd = &cobra.Command{
 					map[string]interface{}{"ok": color.GreenString("ok:")}))
 		}
 
+		if Flags.property.cacert {
+			delete(props, "CACERT")
+			okMsg += fmt.Sprintf(
+				wski18n.T("{{.ok}} CA cert unset.\n",
+					map[string]interface{}{"ok": color.GreenString("ok:")}))
+		}
+
 		if Flags.property.auth {
 			delete(props, "AUTH")
 			okMsg += fmt.Sprintf(
@@ -289,7 +306,8 @@ var propertyGetCmd = &cobra.Command{
 
 		// If no property is explicitly specified, default to all properties
 		if !(Flags.property.all || Flags.property.cert ||
-			Flags.property.key || Flags.property.auth ||
+			Flags.property.key || Flags.property.cacert ||
+			Flags.property.auth ||
 			Flags.property.apiversion || Flags.property.cliversion ||
 			Flags.property.namespace || Flags.property.apibuild ||
 			Flags.property.apihost || Flags.property.apibuildno) {
@@ -302,6 +320,10 @@ var propertyGetCmd = &cobra.Command{
 
 		if Flags.property.all || Flags.property.key {
 			fmt.Fprintf(color.Output, "%s\t\t%s\n", wski18n.T("Client key"), boldString(Properties.Key))
+		}
+
+		if Flags.property.all || Flags.property.cacert {
+			fmt.Fprintf(color.Output, "%s\t\t%s\n", wski18n.T("CA certificate"), boldString(Properties.CaCert))
 		}
 
 		if Flags.property.all || Flags.property.auth {
@@ -361,6 +383,7 @@ func init() {
 	// need to set property flags as booleans instead of strings... perhaps with boolApihost...
 	propertyGetCmd.Flags().BoolVar(&Flags.property.cert, "cert", false, wski18n.T("client cert"))
 	propertyGetCmd.Flags().BoolVar(&Flags.property.key, "key", false, wski18n.T("client key"))
+	propertyGetCmd.Flags().BoolVar(&Flags.property.cacert, "cacert", false, wski18n.T("CA cert"))
 	propertyGetCmd.Flags().BoolVar(&Flags.property.auth, "auth", false, wski18n.T("authorization key"))
 	propertyGetCmd.Flags().BoolVar(&Flags.property.apihost, "apihost", false, wski18n.T("whisk API host"))
 	propertyGetCmd.Flags().BoolVar(&Flags.property.apiversion, "apiversion", false, wski18n.T("whisk API version"))
@@ -373,12 +396,14 @@ func init() {
 	propertySetCmd.Flags().StringVarP(&Flags.Global.Auth, "auth", "u", "", wski18n.T("authorization `KEY`"))
 	propertySetCmd.Flags().StringVar(&Flags.Global.Cert, "cert", "", wski18n.T("client cert"))
 	propertySetCmd.Flags().StringVar(&Flags.Global.Key, "key", "", wski18n.T("client key"))
+	propertySetCmd.Flags().StringVar(&Flags.Global.CaCert, "cacert", "", wski18n.T("CA cert"))
 	propertySetCmd.Flags().StringVar(&Flags.property.apihostSet, "apihost", "", wski18n.T("whisk API `HOST`"))
 	propertySetCmd.Flags().StringVar(&Flags.property.apiversionSet, "apiversion", "", wski18n.T("whisk API `VERSION`"))
 	propertySetCmd.Flags().StringVar(&Flags.property.namespaceSet, "namespace", "", wski18n.T("whisk `NAMESPACE`"))
 
 	propertyUnsetCmd.Flags().BoolVar(&Flags.property.cert, "cert", false, wski18n.T("client cert"))
 	propertyUnsetCmd.Flags().BoolVar(&Flags.property.key, "key", false, wski18n.T("client key"))
+	propertyUnsetCmd.Flags().BoolVar(&Flags.property.cacert, "cacert", false, wski18n.T("CA cert"))
 	propertyUnsetCmd.Flags().BoolVar(&Flags.property.auth, "auth", false, wski18n.T("authorization key"))
 	propertyUnsetCmd.Flags().BoolVar(&Flags.property.apihost, "apihost", false, wski18n.T("whisk API host"))
 	propertyUnsetCmd.Flags().BoolVar(&Flags.property.apiversion, "apiversion", false, wski18n.T("whisk API version"))
@@ -390,6 +415,7 @@ func SetDefaultProperties() {
 	Properties.Key = DefaultCert
 	Properties.Cert = DefaultKey
 	Properties.Auth = DefaultAuth
+	Properties.CaCert = DefaultCaCert
 	Properties.Namespace = DefaultNamespace
 	Properties.APIHost = DefaultAPIHost
 	Properties.APIBuild = DefaultAPIBuild
@@ -460,6 +486,10 @@ func loadProperties() error {
 		Properties.Key = key
 	}
 
+	if cacert, hasProp := props["CACERT"]; hasProp {
+		Properties.CaCert = cacert
+	}
+
 	if authToken, hasProp := props["AUTH"]; hasProp {
 		Properties.Auth = authToken
 	}
@@ -508,6 +538,13 @@ func parseConfigFlags(cmd *cobra.Command, args []string) error {
 		Properties.Key = key
 		if Client != nil {
 			Client.Config.Key = key
+		}
+	}
+
+	if cacert := Flags.Global.CaCert; len(cacert) > 0 {
+		Properties.Key = cacert
+		if Client != nil {
+			Client.Config.CaCert = cacert
 		}
 	}
 

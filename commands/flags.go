@@ -46,6 +46,7 @@ type FlagsStruct struct {
 		Debug      bool
 		Cert       string
 		Key        string
+		CaCert     string
 		Auth       string
 		Apihost    string
 		Apiversion string
@@ -72,6 +73,7 @@ type FlagsStruct struct {
 	property struct {
 		cert          bool
 		key           bool
+		cacert        bool
 		auth          bool
 		apihost       bool
 		apiversion    bool

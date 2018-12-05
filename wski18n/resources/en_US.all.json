@@ -337,12 +337,12 @@
     "translation": "get property"
   },
   {
-    "id": "client cert",
-    "translation": "client cert"
+    "id": "Client certificate filename",
+    "translation": "Client certificate filename"
   },
   {
-    "id": "client key",
-    "translation": "client key"
+    "id": "Client key filename",
+    "translation": "Client key filename"
   },
   {
     "id": "whisk auth",
@@ -1586,5 +1586,13 @@
   {
     "id": "A response type of 'http' is required when using path parameters.",
     "translation": "A response type of 'http' is required when using path parameters."
+  },
+  {
+    "id": "{{.ok}} CA cert set. Run 'wsk property get --cacert' to see the new value.\n",
+    "translation": "{{.ok}} CA cert set. Run 'wsk property get --cacert' to see the new value.\n"
+  },
+  {
+    "id": "CA certificate filename",
+    "translation": "CA certificate filename"
   }
 ]

@@ -59,6 +59,7 @@ func SetupClientConfig(cmd *cobra.Command, args []string) error {
 	clientConfig := &whisk.Config{
 		Cert:              Properties.Cert,
 		Key:               Properties.Key,
+		CaCert:            Properties.CaCert,
 		AuthToken:         Properties.Auth,
 		Namespace:         Properties.Namespace,
 		BaseURL:           baseURL,

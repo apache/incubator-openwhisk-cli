@@ -63,6 +63,7 @@ func init() {
 	WskCmd.PersistentFlags().BoolVarP(&Flags.Global.Debug, "debug", "d", false, wski18n.T("debug level output"))
 	WskCmd.PersistentFlags().StringVar(&Flags.Global.Cert, "cert", "", wski18n.T("client cert"))
 	WskCmd.PersistentFlags().StringVar(&Flags.Global.Key, "key", "", wski18n.T("client key"))
+	WskCmd.PersistentFlags().StringVar(&Flags.Global.CaCert, "cacert", "", wski18n.T("CA certificate"))
 	WskCmd.PersistentFlags().StringVarP(&Flags.Global.Auth, "auth", "u", "", wski18n.T("authorization `KEY`"))
 	WskCmd.PersistentFlags().StringVar(&Flags.Global.Apihost, "apihost", "", wski18n.T("whisk API `HOST`"))
 	WskCmd.PersistentFlags().StringVar(&Flags.Global.Apiversion, "apiversion", "", wski18n.T("whisk API `VERSION`"))
