@@ -22,10 +22,11 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"reflect"
 	"strconv"
 	"strings"
 
+	reflect "github.com/goccy/go-reflect"
+	
 	"github.com/apache/openwhisk-cli/wski18n"
 	"github.com/apache/openwhisk-client-go/whisk"
 
