@@ -196,12 +196,12 @@ class WskCliBasicTests extends TestHelpers with WskTestHelpers {
     }
 
     val stdout = wsk.action.get(name).stdout
-    stdout should not include regex(""""key": "a"""")
-    stdout should not include regex(""""value": "A"""")
-    stdout should include regex (""""key": "b""")
-    stdout should include regex (""""value": "B"""")
-    stdout should include regex (""""publish": false""")
-    stdout should include regex (""""version": "0.0.2"""")
+    stdout should not include (""""key": "a"""")
+    stdout should not include (""""value": "A"""")
+    stdout should include (""""key": "b""")
+    stdout should include (""""value": "B"""")
+    stdout should include (""""publish": false""")
+    stdout should include (""""version": "0.0.2"""")
     wsk.action.list().stdout should include(name)
   }
 
@@ -809,6 +809,18 @@ class WskCliBasicTests extends TestHelpers with WskTestHelpers {
             "action" -> JsString(ns + "/" + actionName2)))
         logs shouldBe expectedLogs
       }
+  }
+
+  it should "display proper error when trigger is not associated with active rule" in withAssetCleaner(wskprops) {
+    val triggerName = withTimestamp("noRuleTrigger")
+
+    (wp, assetHelper) =>
+      assetHelper.withCleaner(wsk.trigger, triggerName) { (trigger, _) =>
+        trigger.create(triggerName)
+      }
+
+      wsk.trigger.fire(triggerName)
+        .stdout should include regex(s"trigger /.*/$triggerName did not fire as it is not associated with an active rule")
   }
 
   behavior of "Wsk Rule CLI"
