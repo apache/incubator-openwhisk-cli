@@ -63,7 +63,7 @@ gofmt.enabled = false
     storage is in "GO" format:
 
         OS: linux, darwin, windows
-        Arch: 386, amd64, s390x, ppc64le, arm
+        Arch: 386, amd64, s390x, ppc64le, arm, arm64
 
     TODO - It may be appropriate to refactor into a general purpose Platform
            class for all builds, then to extend with specifics needed for
