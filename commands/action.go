@@ -26,10 +26,11 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strings"
 	"time"
 
+	reflect "github.com/goccy/go-reflect"
+	
 	"github.com/apache/openwhisk-cli/wski18n"
 	"github.com/apache/openwhisk-client-go/whisk"
 
